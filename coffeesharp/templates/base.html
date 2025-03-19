@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% load static %}
+{% load menu_tags %}
+{% get_categories as categories %}
+<html>
+<link type="text/css" href="{% static 'menu/css/styles.css' %}" rel="stylesheet" />
+<head>
+ <style>
+    nav {
+        background-image: url("{% static 'menu/images/coffffee.jpg' %}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
+ <title>{{title}}</title>
+</head>
+<body>
+<ul>
+<li><a href="{% url 'home' %}">Главная</a></li>
+{% for m in menu1 %}
+{% if not forloop.last %}<li>{% else %}<li
+class="last">{% endif %}
+ <a href="{% url m.url_name %}">{{m.title}}</a>
+</li>
+{% endfor %}
+</ul>
+{% block content %}{% autoescape off %}
+{{p.content|linebreaks|truncatewords:100}}
+{% endautoescape %} {% endblock %}
+</body>
+</html>

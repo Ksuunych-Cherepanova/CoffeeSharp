@@ -1,0 +1,152 @@
+/* Подключаемый стиль для кофейни */
+
+/* Общие стили */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #ece7e2;
+    color: #3a1f1f;
+    margin: 0;
+    padding: 0;
+
+}
+
+/* Верхний блок перед навигацией */
+.header-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 10px 0;
+}
+/* Контейнер, который центрирует меню */
+.menu-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Растягиваем контейнер на всю высоту экрана */
+    width: 100%; /* Растягиваем контейнер на всю ширину */
+}
+
+/* Грид для кнопок */
+.menu_items-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Две колонки */
+    gap: 20px; /* Отступ между элементами */
+    list-style: none;
+    padding: 0;
+}
+
+/* Стили для кнопок */
+.menu_items-list li {
+    background: #fff;
+    padding: 25px; /* Увеличенные кнопки */
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    font-size: 20px; /* Сделал текст крупнее */
+    font-weight: bold;
+    min-width: 200px; /* Фиксированная ширина */
+}
+
+/* Центрируем последний элемент, если он один в строке */
+.menu_items-list li:nth-last-child(1):nth-child(odd) {
+    grid-column: span 2; /* Занимает всю строку */
+    justify-self: center;
+}
+
+/* Стили для ссылок */
+.menu_items-list li a {
+    display: block;
+    text-decoration: none;
+    font-weight: bold;
+    color: #5a3d2b;
+    padding: 15px 0;
+}
+
+.menu_items-list li a:hover {
+    text-decoration: underline;
+}
+
+
+
+/* Навигация */
+nav {
+    /*background-color: #5a3d2b;*/
+    padding: 15px 0;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 20px;
+    font-weight: bold;
+    background-color: #7a5a42;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+nav a:hover {
+    background-color: #936c50;
+}
+
+/* Заголовки */
+h1, h2 {
+    color: #4a2c2c;
+    text-align: center;
+}
+
+/* Контент */
+.content-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap; /* Позволяем кнопкам переноситься */
+    justify-content: center;
+    gap: 20px;
+    overflow-x: hidden; /* Убираем горизонтальную прокрутку */
+}
+
+li {
+    background: #fff;
+    padding: 15px 25px; /* Добавляем отступы для удобства */
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    flex: 0 1 auto; /* Размер зависит от содержимого */
+    text-align: center;
+    /*white-space: nowrap;  Запрещаем перенос текста внутри кнопки */
+}
+
+
+/* Ссылки */
+a {
+    color: #5a3d2b;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Подвал */
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #5a3d2b;
+    color: white;
+    margin-top: 20px;
+}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include 'menu/includes/nav.html' %}
+
+<h1>{{title}}</h1>
+<ul>
+ {% for p in posts %}
+ {% if p.is_published %}
+ <li>
+ <h2>{{p.title}}</h2>
+
+ <p >{% autoescape off %}
+{{p.content|linebreaks|truncatewords:50}}
+{% endautoescape %}</p>
+ <p ><a href="{% url 'post' p.id
+%}">Подробнее</a></p>
+ {% if not forloop.last %}
+ <hr>
+ {% endif %}
+ </li>
+ {% endif %}
+ {% endfor %}
+</ul>
+{% include 'menu/includes/nav.html' %}
+<ul id="leftchapters">
+<li class="selected">Все
+категории</li>
+{% for cat in categories %}
+<li><a
+href="#">{{cat.name}}</a></li>
+{% endfor %}
+<li class="share">
+<p >Наш канал</p>
+<a class="share-yt" href="..."
+target="_blank" rel="nofollow"></a>
+</li>
+</ul>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load catalog_tags %}
+{% block content %}
+{% include 'menu/includes/nav.html' %}
+<h1>{{title}}</h1>
+
+<div class="categories">
+        {% show_categories %}
+</div>
+{% include 'menu/includes/nav.html' %}
+{% endblock %}
