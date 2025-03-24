@@ -2,6 +2,7 @@
 {% load static %}
 {% load menu_tags %}
 {% get_categories as categories %}
+
 <html>
 <link type="text/css" href="{% static 'menu/css/styles.css' %}" rel="stylesheet" />
 <head>
@@ -13,6 +14,7 @@
         background-repeat: no-repeat;
     }
 </style>
+    {% include 'menu/includes/nav.html' %}
  <title>{{title}}</title>
 </head>
 <body>
@@ -28,5 +30,7 @@ class="last">{% endif %}
 {% block content %}{% autoescape off %}
 {{p.content|linebreaks|truncatewords:100}}
 {% endautoescape %} {% endblock %}
+
 </body>
+{% include 'menu/includes/nav.html' %}
 </html>

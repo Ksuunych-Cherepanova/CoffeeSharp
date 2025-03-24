@@ -10,6 +10,8 @@ body {
 
 }
 
+
+
 /* Верхний блок перед навигацией */
 .header-container {
     display: flex;
@@ -149,4 +151,16 @@ footer {
     background-color: #5a3d2b;
     color: white;
     margin-top: 20px;
+}
+.post-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #fff; /* Цвет фона */
+    padding: 20px; /* Внутренние отступы */
+    border-radius: 12px; /* Закругленные углы */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15); /* Тень */
+    max-width: 800px; /* Максимальная ширина */
+    margin: 20px auto; /* Центрирование */
 }
