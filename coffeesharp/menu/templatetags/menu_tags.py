@@ -1,6 +1,14 @@
+from django.db.models import Count
+
+from menu.models import Category, TagPost
 from django import template
-import menu.views as views
+
 register = template.Library()
+
 @register.simple_tag()
 def get_categories():
-    return views.cats_db
+    return Category.objects.all()
+
+@register.inclusion_tag('menu/list_tags.html')
+def show_all_tags():
+    return {"tags":TagPost.objects.annotate(total=Count("tags")).filter(total__gt=0)}

@@ -2,9 +2,27 @@
 
 {% block content %}
     <h1>{{ post.title }}</h1>
+    {% block breadcrumbs %}
+    <!-- Теги -->
+    {% with post.tags.all as tags %}
+    {% if tags %}
+    <ul class="tags-list">
+        <li>Теги:</li>
+        {% for t in tags %}
+        <li><a
+                href="{{t.get_absolute_url}}">{{t.tag}}</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    {% endblock %}
 
-    {% if post.photo %}
-        <p><img class="img-article-left" src="{{ post.photo.url }}"></p>
+    {% if post.cover and post.cover.image %}
+        <div class="cover">
+            <img class="img-article-left" src="{{ post.cover.image.url }}" alt="{{ post.cover.caption }}">
+        </div>
+    {% else %}
+        <p>No cover image available.</p>
     {% endif %}
 
     <div class="post-content">

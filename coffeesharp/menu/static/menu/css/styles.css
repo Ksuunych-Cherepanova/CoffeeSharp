@@ -164,3 +164,44 @@ footer {
     max-width: 800px; /* Максимальная ширина */
     margin: 20px auto; /* Центрирование */
 }
+
+/* Центрируем изображение */
+.cover {
+    text-align: center; /* Центрирует изображение внутри блока */
+    margin: 20px 0; /* Добавим отступы сверху и снизу */
+}
+
+.cover img {
+    max-width: 100%; /* Ограничиваем ширину изображения */
+    height: auto; /* Сохраняем пропорции изображения */
+    max-height: 300px; /* Устанавливаем максимальную высоту изображения */
+    border: 5px solid #ddd; /* Добавляем рамку с серым цветом */
+    border-radius: 10px; /* Скругляем углы рамки */
+    padding: 5px; /* Отступ между изображением и рамкой */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Легкая тень для изображения */
+}
+
+.cover img:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Увеличиваем тень при наведении */
+    transition: all 0.3s ease; /* Плавный переход */
+}
+
+.news-cover {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.cover-preview {
+    max-width: 100%;
+    height: auto;
+    max-height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cover-preview:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
