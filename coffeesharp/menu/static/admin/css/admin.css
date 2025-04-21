@@ -1,0 +1,107 @@
+
+/* Кофейное оформление админки */
+
+body {
+    background-color: #ece7e2;
+    font-family: 'Arial', sans-serif;
+    color: #3a1f1f;
+}
+
+#header {
+    background-color: #7a5a42;
+    padding: 10px;
+}
+
+#header h1 a {
+    color: #fff;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+#user-tools a {
+    color: #fff;
+}
+
+#content h1, #content h2, .module caption, .inline-group h2 {
+    color: #4a2c2c;
+    background-color: #ece7e2;
+    border-bottom: 1px solid #7a5a42;
+}
+
+.module {
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.module h2 {
+    padding: 10px;
+}
+
+.button, input[type=submit], .submit-row input {
+    background-color: #7a5a42;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+.button:hover, input[type=submit]:hover, .submit-row input:hover {
+    background-color: #936c50;
+}
+
+a {
+    color: #5a3d2b;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+#footer {
+    background-color: #5a3d2b;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+div.breadcrumbs {
+    background-color: #6A6E5D;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+/* Улучшенный контраст текста в модулях админки */
+
+.app-menu.module, .app-auth.module {
+    background-color: #ffffff;
+    color: #3a1f1f;
+}
+
+.app-menu.module a, .app-auth.module a {
+    color: #5a3d2b;
+    font-weight: bold;
+}
+
+.app-menu.module a:hover, .app-auth.module a:hover {
+    color: #936c50;
+    text-decoration: underline;
+}
+
+.module caption {
+    background-color: #ece7e2;
+    color: #4a2c2c;
+    font-weight: bold;
+    padding: 10px;
+    border-bottom: 1px solid #c9b9ae;
+}
+
+#content-main .module table th,
+#content-main .module table td {
+    background-color: #fdfaf6;
+    color: #3a1f1f;
+    padding: 10px;
+}
+
