@@ -1,14 +1,16 @@
 from calendar import month
 from datetime import datetime
-from menu.models import Menu, Category, TagPost
+import uuid
+from menu.forms import AddPostForm, UploadFileForm
+from menu.models import Menu, Category, TagPost, UploadFiles, MenuGalleryCover
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.shortcuts import render
 
 menu1 = [{'title': "О сайте", 'url_name': 'about'},
-         {'title': "Добавить отзыв", 'url_name':
-             'addcomment'},
+         {'title': "Добавить пост", 'url_name':
+             'addpage'},
          {'title': "Акции", 'url_name':
              'special'},
          {'title': "Меню", 'url_name':
@@ -17,7 +19,6 @@ menu1 = [{'title': "О сайте", 'url_name': 'about'},
              'feedback'},
          {'title': "Войти", 'url_name': 'login'}
          ]
-
 
 
 def addcomment(request):
@@ -80,10 +81,28 @@ def index(request):
                   context=data)
 
 
-def about(request):
-    return render(request, 'menu/about.html',
-                  {'title': 'О сайте', 'menu1': menu1})
+def handle_uploaded_file(f):
+     name = f.name
+     ext = ''
+     if '.' in name:
+         ext = name[name.rindex('.'):]
+         name = name[:name.rindex('.')]
+     suffix = str(uuid.uuid4())
+     with open(f"uploads/{name}_{suffix}{ext}", "wb+") as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
 
+
+def about(request):
+    if request.method == "POST":
+        form = UploadFileForm(request.POST,request.FILES)
+        if form.is_valid():
+            fp = UploadFiles(file=form.cleaned_data['file'])
+            fp.save()
+    else:
+        form = UploadFileForm()
+    return render(request, 'menu/about.html',
+                  {'title': 'О сайте', 'menu1': menu1, 'form': form})
 
 def menu(request):
     return render(request, 'menu/menu.html',
@@ -134,9 +153,28 @@ def show_tag_postlist(request, tag_slug):
     tag = get_object_or_404(TagPost, slug=tag_slug)
     posts = tag.tags.filter(is_published=Menu.Status.PUBLISHED)
     data = {
-    'title': f'Тег: {tag.tag}',
-    'menu1': menu1,
-    'posts': posts,
-    'cat_selected': None,
+        'title': f'Тег: {tag.tag}',
+        'menu1': menu1,
+        'posts': posts,
+        'cat_selected': None,
     }
     return render(request, 'menu/index.html', context=data)
+
+
+def addpage(request):
+    if request.method == 'POST':
+        form = AddPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                form.save()
+                return redirect('home')
+            except Exception as e:
+                form.add_error(None, f'Ошибка добавления поста: {e}')
+        else:
+            form.add_error(None, 'Форма невалидна')
+    else:
+        form = AddPostForm()
+
+    return render(request, 'menu/addpage.html',
+                  {'menu1': menu1, 'title': 'Добавление статьи', 'form': form})
+

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'menu.apps.MenuConfig',
+    'django_select2'
     ]
 
 MIDDLEWARE = [
@@ -127,5 +128,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / 'menu/static',
 ]

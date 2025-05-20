@@ -2,6 +2,7 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.urls import reverse
+from django.core.validators import MinLengthValidator,MaxLengthValidator
 
 class PublishedManager(models.Manager):
     def get_queryset(self):
@@ -29,7 +30,9 @@ class Menu(models.Model):
         PUBLISHED = 1, 'Опубликовано'
 
     title = models.CharField(max_length=255 ,verbose_name="Заголовок")
-    slug = models.SlugField(max_length=255, db_index=True, unique=True)
+    slug = models.SlugField(max_length=255,
+                            db_index=True, unique=True, validators=[MinLengthValidator(5),MaxLengthValidator(100),])
+
     content = models.TextField(blank=True ,verbose_name="Текст поста")
     time_create = models.DateTimeField(auto_now_add=True ,verbose_name="Время создания")
     time_update = models.DateTimeField(auto_now=True ,verbose_name="Время изменения")
@@ -42,6 +45,10 @@ class Menu(models.Model):
 
     objects = models.Manager()
     published = PublishedManager()
+
+    photo = models.ImageField(upload_to="photos/%Y/%m/%d/",
+                              default=None, blank=True, null=True,
+                              verbose_name="Фото")
 
     class Meta:
         verbose_name = 'Новости кофейни'
@@ -96,3 +103,6 @@ class MenuGalleryCover(models.Model):
 
     def __str__(self):
         return f"Обложка для: {self.menu.title}"
+
+class UploadFiles(models.Model):
+    file = models.FileField(upload_to='uploads_model')

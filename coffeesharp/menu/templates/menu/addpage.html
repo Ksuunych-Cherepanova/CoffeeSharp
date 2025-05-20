@@ -1,0 +1,93 @@
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 25px;
+        background-color: #fdfaf6;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: block;
+        font-size: 1.1rem;
+        color: #3e2f25;
+    }
+
+    .form-input,
+    .form-tag-input,
+    select,
+    textarea {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+        border: 1px solid #c0b4a8;
+        border-radius: 6px;
+        background-color: #fffdfc;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus,
+    .form-tag-input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: #8b5e3c;
+        outline: none;
+    }
+
+    input[type="file"] {
+        padding: 10px;
+        background-color: #fffdfc;
+        border: 1px dashed #c0b4a8;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .form-error {
+        color: #b30000;
+        font-size: 0.9em;
+        margin-top: 4px;
+    }
+
+    button {
+        padding: 12px 24px;
+        background-color: #6f4e37;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #5a3e2a;
+    }
+</style>
+
+
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>{{title}}</h1>
+<form action="" method="post" enctype="multipart/form-data">
+ {% csrf_token %}
+ <div class="form-error">{{ form.non_field_errors}}</div>
+{% for f in form %}
+<label class="form-label" for="{{ f.id_for_label}}">{{f.label}}: </label>{{ f }}
+<div class="form-error">{{ f.errors }}</div>
+{% endfor %}
+ <button type="submit">Добавить</button>
+</form>
+
+{% endblock %}
+
+
