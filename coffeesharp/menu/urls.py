@@ -5,7 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', views.index, name = 'home'),
+    path('', views.MenuHome.as_view(), name = 'home'),
     path('about/', views.about, name='about'),
     path('menu/<slug:categ_slug>/', views.menu_slug, name = 'menu_category'),
     path('menu/', views.menu, name = 'menu'),
@@ -20,10 +20,12 @@ urlpatterns = [
     path('desserts/', views.category_desserts, name='category_desserts'),
     path('breakfast/', views.category_breakfast, name='category_breakfast'),
     path('sandwich/', views.category_sandwich, name='category_sandwich'),
-    path('post/<slug:post_slug>/', views.show_post,name='post'),
-    path('category/<slug:cat_slug>/', views.show_category, name='category'),
-    path('tag/<slug:tag_slug>/', views.show_tag_postlist, name='tag'),
-    path('addpage/', views.addpage, name='addpage'),
+    path('post/<slug:post_slug>/', views.ShowPost.as_view(),name='post'),
+    path('category/<slug:cat_slug>/', views.MenuCategory.as_view(), name='category'),
+    path('tag/<slug:tag_slug>/', views.TagPostList.as_view(), name='tag'),
+    path('addpage/', views.AddPage.as_view(), name='addpage'),
+    path('edit/<int:pk>/', views.UpdatePage.as_view(),name='edit_page'),
+    path('delete/<int:pk>/', views.DeletePage.as_view(), name='delete_page'),
 
 ]
 

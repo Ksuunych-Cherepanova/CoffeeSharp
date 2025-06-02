@@ -27,4 +27,8 @@
     <div class="post-content">
         {{ post.content|linebreaks }}
     </div>
+    <div class="post-actions" style="margin-bottom: 20px;">
+        <a href="{% url 'edit_page' post.pk %}" class="btn btn-warning">Редактировать</a>
+        <a href="{% url 'delete_page' post.pk %}" class="btn btn-danger">Удалить</a>
+    </div>
 {% endblock %}

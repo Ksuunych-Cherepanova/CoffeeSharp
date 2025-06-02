@@ -1,12 +1,18 @@
 from calendar import month
 from datetime import datetime
 import uuid
+
+from django.views import View
+from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView, UpdateView, DeleteView
+
 from menu.forms import AddPostForm, UploadFileForm
 from menu.models import Menu, Category, TagPost, UploadFiles, MenuGalleryCover
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.shortcuts import render
+
+from menu.utils import DataMixin
 
 menu1 = [{'title': "О сайте", 'url_name': 'about'},
          {'title': "Добавить пост", 'url_name':
@@ -57,28 +63,30 @@ def category_desserts(request):
     return HttpResponse("Десерты")
 
 
-def show_post(request, post_slug):
-    post = get_object_or_404(Menu, slug=post_slug)
-    data = {
-        'title': post.title,
-        'menu1': menu1,
-        'post': post,
-        'cat_selected': 1,
-    }
-    return render(request, 'menu/post.html',
-                  context=data)
+class ShowPost(DataMixin,DetailView):
+    model = Menu
+    template_name = 'menu/post.html'
+    slug_url_kwarg = 'post_slug'
+    context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return self.get_mixin_context(context,
+                                      title=context['post'])
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Menu.published,slug=self.kwargs[self.slug_url_kwarg])
 
 
-def index(request):
-    posts = Menu.published.all()
-    data = {
-        'title': 'Главная страница',
-        'menu1': menu1,
-        'posts': posts,
-        'cat_selected': 0,
-    }
-    return render(request, 'menu/index.html',
-                  context=data)
+class MenuHome(DataMixin, ListView):
+    def get_queryset(self):
+        return Menu.published.all().select_related('cat')
+    template_name = 'menu/index.html'
+    context_object_name = 'posts'
+
+    def get_context_data(self, *, object_list=None,**kwargs):
+        return self.get_mixin_context(super().get_context_data(**kwargs), title='Главная страница', cat_selected=0, )
+
 
 
 def handle_uploaded_file(f):
@@ -109,16 +117,18 @@ def menu(request):
                   {'title': 'Меню', 'menu1': menu1})
 
 
-def show_category(request, cat_slug):
-    category = get_object_or_404(Category, slug=cat_slug)
-    posts = Menu.published.filter(cat_id=category.pk)
-    data = {
-        'title': f'Рубрика: {category.name}',
-        'menu1': menu1,
-        'posts': posts,
-        'cat_selected': category.pk,
-    }
-    return render(request, 'menu/index.html', context=data)
+class MenuCategory(DataMixin,ListView):
+    template_name = 'menu/index.html'
+    context_object_name = 'posts'
+    allow_empty = False
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cat = context['posts'][0].cat
+        return self.get_mixin_context(context,title='Категория - ' + cat.name,cat_selected = cat.id,)
+
+    def get_queryset(self):
+        return Menu.published.filter(cat__slug=self.kwargs['cat_slug']).select_related('cat')
 
 
 def menu_slug(request, categ_slug):
@@ -148,33 +158,44 @@ def special(request):
 def page_not_found(request, exception):
     return HttpResponseNotFound('<h1>Страница не найдена</h1>')
 
+class TagPostList(DataMixin, ListView):
+    template_name = 'menu/index.html'
+    context_object_name = 'posts'
+    allow_empty = False
 
-def show_tag_postlist(request, tag_slug):
-    tag = get_object_or_404(TagPost, slug=tag_slug)
-    posts = tag.tags.filter(is_published=Menu.Status.PUBLISHED)
-    data = {
-        'title': f'Тег: {tag.tag}',
-        'menu1': menu1,
-        'posts': posts,
-        'cat_selected': None,
-    }
-    return render(request, 'menu/index.html', context=data)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tag = TagPost.objects.get(slug=self.kwargs['tag_slug'])
+        return self.get_mixin_context(context,title='Тег: ' + tag.tag)
+    def get_queryset(self):
+        return  Menu.published.filter(tags__slug=self.kwargs['tag_slug']).select_related('cat')
+
+class AddPage(DataMixin,CreateView):
+    form_class = AddPostForm
+    title_page = 'Добавление статьи'
+    template_name = 'menu/addpage.html'
+    success_url = reverse_lazy('home')
+
+class UpdatePage(DataMixin,UpdateView):
+    model = Menu
+    fields = ['title', 'content', 'photo','is_published', 'cat']
+    template_name = 'menu/addpage.html'
+    success_url = reverse_lazy('home')
+    title_page = 'Редактирование статьи'
+
+class DeletePage(DataMixin,DeleteView):
+    model = Menu
+    template_name = 'menu/delete.html'
+    success_url = reverse_lazy('home')
+    title_page = 'Удаление статьи'
 
 
-def addpage(request):
-    if request.method == 'POST':
-        form = AddPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            try:
-                form.save()
-                return redirect('home')
-            except Exception as e:
-                form.add_error(None, f'Ошибка добавления поста: {e}')
-        else:
-            form.add_error(None, 'Форма невалидна')
-    else:
-        form = AddPostForm()
 
-    return render(request, 'menu/addpage.html',
-                  {'menu1': menu1, 'title': 'Добавление статьи', 'form': form})
+
+
+
+
+
+
+
 
