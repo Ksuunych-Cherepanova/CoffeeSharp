@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .profile-avatar {
+    display: block;
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 0 auto 30px auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-container {
+        max-width: 600px;
+        margin: 80px auto;
+        padding: 40px;
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        font-size: 18px;
+    }
+
+    .profile-container h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 34px;
+        color: #6f4e37;
+    }
+
+    .profile-container label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .profile-container input {
+        width: 100%;
+        padding: 12px 15px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 18px;
+    }
+
+    .form-error {
+        color: #d9534f;
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    .profile-container button {
+        width: 100%;
+        padding: 15px;
+        font-size: 20px;
+        background-color: #6f4e37;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .profile-container button:hover {
+        background-color: #5a3c2b;
+    }
+</style>
+
+<div class="profile-container">
+    <h1>Профиль</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if user.photo %}
+    <img src="{{ user.photo.url }}" alt="Аватар" class="profile-avatar">
+{% else %}
+    <img src="{{ default_image }}" alt="Аватар по умолчанию" class="profile-avatar">
+{% endif %}
+
+        {% for f in form %}
+            <label for="{{ f.id_for_label }}">{{ f.label }}</label>
+            {{ f }}
+            <div class="form-error">{{ f.errors }}</div>
+        {% endfor %}
+        <button type="submit">Сохранить</button>
+        <hr>
+        <p ><a href="{% url 'users:password_change' %}">Сменить пароль</a></p>
+    </form>
+</div>
+
+{% endblock %}

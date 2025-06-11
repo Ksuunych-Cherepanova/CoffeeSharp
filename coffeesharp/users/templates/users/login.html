@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  .login-container {
+    max-width: 400px;
+    margin: 50px auto; /* центрируем по горизонтали и немного сверху */
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background-color: #fff;
+  }
+  .login-container h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 600;
+    font-size: 2em;
+  }
+  .login-container form p {
+    margin-bottom: 20px;
+  }
+  .login-container input[type="text"],
+  .login-container input[type="password"],
+  .login-container input[type="email"] {
+    width: 100%;
+    padding: 15px 12px;
+    font-size: 1.1em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+  }
+  .login-container button[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em;
+    background-color: #6f4e37;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  .login-container button[type="submit"]:hover {
+    background-color: #5a3c2d;
+  }
+</style>
+
+<div class="login-container">
+  <h1>Авторизация</h1>
+  <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}" />
+      <div class="form-error">{{ form.non_field_errors}}</div>
+        {% for f in form %}
+            <p ><label class="form-label" for="{{ f.id_for_label}}">{{f.label}}: </label>{{ f }}</p>
+      <div class="form-error">{{ f.errors }}</div>
+        {% endfor %}
+
+      <p>
+          <button type="submit">Войти</button>
+      </p>
+      <p ><a href="{% url 'users:password_reset' %}">Забыли пароль?</a></p>
+
+  </form>
+</div>
+{% endblock %}

@@ -3,6 +3,7 @@
 {% load menu_tags %}
 {% get_categories as categories %}
 
+
 <html>
 <link type="text/css" href="{% static 'menu/css/styles.css' %}" rel="stylesheet"/>
 <head>
@@ -20,11 +21,41 @@
 <body>
 <ul>
     <li><a href="{% url 'home' %}">Главная</a></li>
-    {% for m in menu1 %}
-    <li>
-        <a href="{% url m.url_name %}">{{m.title}}</a>
+    {% block mainmenu %}
+    <div class="header">
+        <ul id="mainmenu"
+            class="mainmenu">
+
+            {% for m in mainmenu %}
+            {% if m.url_name != 'addpost' %}
+            <li><a href="{% url m.url_name %}">{{ m.title }}</a></li>
+            {% else %}
+            {% if perms.menu.add_post %}
+            <li><a href="{% url m.url_name %}">{{ m.title }}</a></li>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+
+
+        </ul>
+        <div class="clear"></div>
+    </div>
+    {% endblock mainmenu %}
+    {% if user.is_authenticated %}
+    <li class="last"> <a href="{% url 'users:profile'%}">{{user.username}}</a>  |
+    <form method="post" action="{% url 'users:logout' %}" style="display: inline;">
+    {% csrf_token %}
+    <button type="submit" style="background: none; border: none; padding: 0; font: inherit; color: blue; cursor: pointer;">
+        Выйти
+    </button>
+</form>
+
     </li>
-    {% endfor %}
+    {% else %}
+    <li class="last"><a href="{% url 'users:login'%}">Войти</a> | <a href="{% url 'users:register'%}">Регистрация</a></li>
+
+    {% endif %}
+
 </ul>
 {% block content %}
 {{ title }}

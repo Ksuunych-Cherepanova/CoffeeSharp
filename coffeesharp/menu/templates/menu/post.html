@@ -6,6 +6,7 @@
 
     {% block breadcrumbs %}
     <!-- Теги -->
+
     {% with post.tags.all as tags %}
     {% if tags %}
     <ul class="tags-list">
@@ -28,7 +29,12 @@
         {{ post.content|linebreaks }}
     </div>
     <div class="post-actions" style="margin-bottom: 20px;">
-        <a href="{% url 'edit_page' post.pk %}" class="btn btn-warning">Редактировать</a>
-        <a href="{% url 'delete_page' post.pk %}" class="btn btn-danger">Удалить</a>
+        {% if perms.menu.change_menu %}
+        <p ><a href="{% url 'edit_page' post.slug%}">Редактировать</a></p>
+        {% endif %}
+        {% if perms.menu.change_menu %}
+        <p ><a href="{% url 'delete_page' post.slug%}">Удалить</a></p>
+        {% endif %}
+
     </div>
 {% endblock %}

@@ -2,6 +2,8 @@ from calendar import month
 from datetime import datetime
 import uuid
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView, UpdateView, DeleteView
 
@@ -100,7 +102,7 @@ def handle_uploaded_file(f):
         for chunk in f.chunks():
             destination.write(chunk)
 
-
+@login_required(login_url='/admin/')
 def about(request):
     if request.method == "POST":
         form = UploadFileForm(request.POST,request.FILES)
@@ -170,18 +172,24 @@ class TagPostList(DataMixin, ListView):
     def get_queryset(self):
         return  Menu.published.filter(tags__slug=self.kwargs['tag_slug']).select_related('cat')
 
-class AddPage(DataMixin,CreateView):
+class AddPage(PermissionRequiredMixin, DataMixin,CreateView):
     form_class = AddPostForm
     title_page = 'Добавление статьи'
     template_name = 'menu/addpage.html'
     success_url = reverse_lazy('home')
+    permission_required = 'menu.add_menu'
+    def form_valid(self, form):
+        w = form.save(commit=False)
+        w.author = self.request.user
+        return super().form_valid(form)
 
-class UpdatePage(DataMixin,UpdateView):
+class UpdatePage(PermissionRequiredMixin,UpdateView):
     model = Menu
     fields = ['title', 'content', 'photo','is_published', 'cat']
     template_name = 'menu/addpage.html'
     success_url = reverse_lazy('home')
     title_page = 'Редактирование статьи'
+    permission_required = 'menu.change_menu'
 
 class DeletePage(DataMixin,DeleteView):
     model = Menu

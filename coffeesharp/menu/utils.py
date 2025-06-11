@@ -6,8 +6,7 @@ menu1 = [{'title': "О сайте", 'url_name': 'about'},
          {'title': "Меню", 'url_name':
              'menu'},
          {'title': "Обратная связь", 'url_name':
-             'feedback'},
-         {'title': "Войти", 'url_name': 'login'}
+             'feedback'}
          ]
 class DataMixin:
     title_page = None

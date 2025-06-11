@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .welcome-container {
+        max-width: 600px;
+        margin: 80px auto;
+        padding: 50px;
+        background-color: #fdfdfd;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .welcome-container h1 {
+        font-size: 36px;
+        color: #6f4e37;
+        margin-bottom: 25px;
+    }
+
+    .welcome-container p {
+        font-size: 20px;
+        color: #333;
+    }
+
+    .welcome-container a {
+        color: #6f4e37;
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.3s ease;
+    }
+
+    .welcome-container a:hover {
+        color: #4b3225;
+        text-decoration: underline;
+    }
+</style>
+
+<div class="welcome-container">
+    <h1>Добро пожаловать!</h1>
+    <p>
+        Вы успешно зарегистрировались на сайте!<br>
+        Для входа в систему перейдите по этой
+        <a href="{% url 'users:login' %}">ссылке</a>.
+    </p>
+</div>
+
+{% endblock %}

@@ -18,7 +18,7 @@
         {% endif %}
 
         <div class="article-panel">
-            <p class="last">Дата: {{ p.time_update|date:"d-m-Y H:i:s" }}</p>
+            <p class="last">Дата: {{ p.time_update|date:"d-m-Y H:i:s" }} | автор:{{p.author.username|default:"неизвестен"}}</p>
         </div>
 
         <h2>{{ p.title }}</h2>
