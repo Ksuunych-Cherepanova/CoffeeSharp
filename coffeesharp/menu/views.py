@@ -4,11 +4,13 @@ import uuid
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+
 from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView, UpdateView, DeleteView
+from django.contrib import messages
 
-from menu.forms import AddPostForm, UploadFileForm
-from menu.models import Menu, Category, TagPost, UploadFiles, MenuGalleryCover
+from menu.forms import AddPostForm, UploadFileForm, CommentForm
+from menu.models import Menu, Category, TagPost, UploadFiles, MenuGalleryCover, Reaction, Comment
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -65,7 +67,7 @@ def category_desserts(request):
     return HttpResponse("Десерты")
 
 
-class ShowPost(DataMixin,DetailView):
+class ShowPost(DataMixin, DetailView):
     model = Menu
     template_name = 'menu/post.html'
     slug_url_kwarg = 'post_slug'
@@ -73,12 +75,38 @@ class ShowPost(DataMixin,DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        return self.get_mixin_context(context,
-                                      title=context['post'])
+        post = self.get_object()
 
-    def get_object(self, queryset=None):
-        return get_object_or_404(Menu.published,slug=self.kwargs[self.slug_url_kwarg])
+        context['comment_form'] = CommentForm()
+        context['comments'] = post.comments.all()
+        context['likes'] = post.reactions.filter(reaction='like').count()
+        context['dislikes'] = post.reactions.filter(reaction='dislike').count()
 
+        user_reaction = None
+        if self.request.user.is_authenticated:
+            user_reaction = post.reactions.filter(user=self.request.user).first()
+        context['user_reaction'] = user_reaction.reaction if user_reaction else None
+
+        return self.get_mixin_context(context, title=post)
+
+    def post(self, request, *args, **kwargs):
+        post = self.get_object()
+
+        if "comment_submit" in request.POST:
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.post = post
+                comment.author = request.user
+                comment.save()
+        elif "reaction" in request.POST and request.user.is_authenticated:
+            reaction_type = request.POST.get("reaction")
+            Reaction.objects.update_or_create(
+                post=post, user=request.user,
+                defaults={"reaction": reaction_type}
+            )
+
+        return HttpResponseRedirect(reverse('post', kwargs={'post_slug': post.slug}))
 
 class MenuHome(DataMixin, ListView):
     def get_queryset(self):
@@ -199,6 +227,36 @@ class DeletePage(DataMixin,DeleteView):
 
 
 
+@login_required
+def edit_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+
+    if request.user != comment.author and not request.user.is_staff:
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Комментарий обновлен.")
+            return redirect(comment.post.get_absolute_url())
+    else:
+        form = CommentForm(instance=comment)
+
+    return render(request, 'menu/edit_comment.html', {'form': form, 'comment': comment})
+
+
+@login_required
+def delete_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+
+    if request.user != comment.author and not request.user.is_staff:
+        return redirect('home')
+
+    post_url = comment.post.get_absolute_url()
+    comment.delete()
+    messages.success(request, "Комментарий удален.")
+    return redirect(post_url)
 
 
 

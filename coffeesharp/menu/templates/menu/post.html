@@ -1,40 +1,99 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{{ post.title }}</h1>
+  <h1>{{ post.title }}</h1>
 
-
-    {% block breadcrumbs %}
-    <!-- Теги -->
-
+{% block breadcrumbs %}
     {% with post.tags.all as tags %}
-    {% if tags %}
-    <ul class="tags-list">
-        <li>Теги:</li>
-        {% for t in tags %}
-        <li><a
-                href="{{t.get_absolute_url}}">{{t.tag}}</a></li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+        {% if tags %}
+            <ul class="tags-list">
+                <li>Теги:</li>
+                {% for t in tags %}
+                    <li><a href="{{ t.get_absolute_url }}">{{ t.tag }}</a></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     {% endwith %}
-    {% endblock %}
-    {% if post.photo %}
+{% endblock %}
+
+{% if post.photo %}
     <div class="cover">
-    <img class="img-article-left"src="{{post.photo.url}}"></p>
+        <img class="img-article-left" src="{{ post.photo.url }}" alt="{{ post.title }}">
     </div>
+{% endif %}
+
+<div class="post-content" style="margin-bottom: 20px;">
+    {{ post.content|linebreaks }}
+    <div class="post-reactions" style="margin-bottom: 30px;">
+    {% if user.is_authenticated %}
+        <form method="post" style="display: flex; align-items: center; gap: 15px;">
+            {% csrf_token %}
+            <button type="submit" name="reaction" value="like"
+                    style="font-size: 24px; background: none; border: none; cursor: pointer;
+                           {% if user_reaction == 'like' %}color:red; font-weight:bold;{% endif %}">
+                ❤️ {{ likes }}
+            </button>
+            <button type="submit" name="reaction" value="dislike"
+                    style="font-size: 24px; background: none; border: none; cursor: pointer;
+                           {% if user_reaction == 'dislike' %}color:darkred; font-weight:bold;{% endif %}">
+                👎🏻 {{ dislikes }}
+            </button>
+        </form>
+    {% else %}
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <a href="{% url 'users:login' %}?next={{ request.path }}"
+               style="font-size: 24px; text-decoration: none; color: inherit;">
+                ❤️ {{ likes }}
+            </a>
+            <a href="{% url 'users:login' %}?next={{ request.path }}"
+               style="font-size: 24px; text-decoration: none; color: inherit;">
+                👎🏻 {{ dislikes }}
+            </a>
+        </div>
     {% endif %}
+</div>
 
-    <div class="post-content">
-        {{ post.content|linebreaks }}
-    </div>
-    <div class="post-actions" style="margin-bottom: 20px;">
-        {% if perms.menu.change_menu %}
-        <p ><a href="{% url 'edit_page' post.slug%}">Редактировать</a></p>
-        {% endif %}
-        {% if perms.menu.change_menu %}
-        <p ><a href="{% url 'delete_page' post.slug%}">Удалить</a></p>
-        {% endif %}
+</div>
 
+<!-- 🔻 Реакции прямо под текстом -->
+
+
+<div class="post-actions" style="margin-bottom: 20px;">
+    {% if perms.menu.change_menu %}
+        <p><a href="{% url 'edit_page' post.slug %}">Редактировать</a></p>
+        <p><a href="{% url 'delete_page' post.slug %}">Удалить</a></p>
+    {% endif %}
+</div>
+
+<!-- 🔻 Комментарии -->
+<div class="feedback-block" style="margin-top: 40px; background: #f5f5f5; padding: 20px; border-radius: 10px;">
+    <h3>Комментарии</h3>
+    {% for comment in comments %}
+    <div style="margin-bottom: 15px; padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 5px;">
+        <strong>{{ comment.author }}</strong><br>
+        {{ comment.content }}<br>
+        <small style="color: #777;">{{ comment.created_at|date:"d.m.Y H:i" }}</small>
+        {% if user == comment.author or user.is_staff %}
+            <div style="margin-top: 5px;">
+                <a href="{% url 'edit_comment' comment.pk %}" style="margin-right: 10px;">✏️ Редактировать</a>
+                <a href="{% url 'delete_comment' comment.pk %}" onclick="return confirm('Удалить комментарий?');">🗑️ Удалить</a>
+            </div>
+        {% endif %}
     </div>
+{% empty %}
+    <p>Комментариев пока нет.</p>
+{% endfor %}
+
+
+    {% if user.is_authenticated %}
+        <h4 style="margin-top: 30px;">Добавить комментарий</h4>
+        <form method="post">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <button type="submit" name="comment_submit" style="margin-top: 10px;">Отправить</button>
+        </form>
+    {% else %}
+        <p><a href="{% url 'users:login' %}">Войдите</a>, чтобы оставить комментарий.</p>
+    {% endif %}
+</div>
 {% endblock %}

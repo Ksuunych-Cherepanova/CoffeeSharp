@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.deconstruct import deconstructible
 
-from .models import Menu, Category, MenuGalleryCover
+from .models import Menu, Category, MenuGalleryCover, Comment
 from django.core.validators import MinLengthValidator,MaxLengthValidator
 from .models import Menu, Category, TagPost
 from django_select2.forms import Select2MultipleWidget
@@ -80,11 +80,21 @@ class AddPostForm(forms.ModelForm):
 
         return menu
 
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Оставьте комментарий...'})
+        }
 
 
-
-
-
-
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Введите ваш комментарий...'})
+        }
 
 

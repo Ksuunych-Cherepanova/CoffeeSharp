@@ -109,3 +109,27 @@ class MenuGalleryCover(models.Model):
 
 class UploadFiles(models.Model):
     file = models.FileField(upload_to='uploads_model')
+
+class Comment(models.Model):
+    post = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True)
+    content = models.TextField(verbose_name='Комментарий')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'Комментарий от {self.author} к {self.post}'
+
+class Reaction(models.Model):
+    class ReactionType(models.TextChoices):
+        LIKE = 'like', 'Лайк'
+        DISLIKE = 'dislike', 'Дизлайк'
+
+    post = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='reactions')
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    reaction = models.CharField(max_length=10, choices=ReactionType.choices)
+
+    class Meta:
+        unique_together = ('post', 'user')
